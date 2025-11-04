@@ -10,3 +10,23 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+---
+
+## Live Deployment
+
+### Vercel
+
+Host your own instance of <a href="https://juju-manhwa-2-0.vercel.app">juju-otaku2.0</a>  on vercel
+
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/SankaVollereii/juju-manhwa-2.0)
+
+---
+
+### 💻 Source Code
+
+Source code: **[https://github.com/Rhakelino/juju-manhwa-2.0](https://github.com/Rhakelino/juju-manhwa-2.0)**
+
+Api Comic: **[https://www.sankavollerei.com/comic](https://www.sankavollerei.com/comic)**
+
+---
