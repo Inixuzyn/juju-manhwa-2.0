@@ -53,8 +53,9 @@ const DetailComic = () => {
     // Loading state
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+            // === MODIFIKASI TEMA GELAP: Loading State ===
+            <div className="bg-[#121212] flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-indigo-500"></div>
             </div>
         )
     }
@@ -62,7 +63,8 @@ const DetailComic = () => {
     // Error state
     if (error) {
         return (
-            <div className="text-center text-red-500 p-4">
+            // === MODIFIKASI TEMA GELAP: Error State ===
+            <div className="bg-[#121212] min-h-screen text-center text-red-400 p-4 pt-10">
                 <h2>Terjadi Kesalahan</h2>
                 <p>{error.message}</p>
             </div>
@@ -71,7 +73,8 @@ const DetailComic = () => {
 
     // Jika tidak ada komik
     if (!comic) {
-        return <div>Komik tidak ditemukan</div>
+        // === MODIFIKASI TEMA GELAP: No Comic State ===
+        return <div className="bg-[#121212] min-h-screen text-gray-100 text-center pt-10">Komik tidak ditemukan</div>
     }
 
     // New function to handle reading the comic
@@ -84,6 +87,8 @@ const DetailComic = () => {
                 chapterLink: firstChapter.link,
                 comicTitle: comic.title,
                 chapterNumber: firstChapter.chapter,
+                // === FIX NAVIGASI: Menyimpan state detail untuk kembali ===
+                comicDetailState: { comic: comic, processedLink: processedLink }, 
             } 
         })
     } else {
@@ -92,64 +97,73 @@ const DetailComic = () => {
 }
 
     return (
-        <div className="container mx-auto p-6">
-            <div className="flex flex-col md:flex-row">
-                <div className="md:w-1/3 mb-6 md:mr-6">
-                    <img
-                        src={comic.image}
-                        alt={comic.title}
-                        className="w-full rounded-lg shadow-lg"
-                    />
-                </div>
-                <div className="md:w-2/3">
-                    <h1 className="text-3xl font-bold mb-4">{comic.title}</h1>
-
-                    <div className="mb-4">
-                        <strong>Chapter:</strong> {comic.chapter}
+        // === MODIFIKASI TEMA GELAP: Main Wrapper ===
+        <div className="bg-[#121212] min-h-screen text-gray-100 py-6">
+            <div className="container mx-auto p-6">
+                <div className="flex flex-col md:flex-row">
+                    <div className="md:w-1/3 mb-6 md:mr-6">
+                        <img
+                            src={comic.image}
+                            alt={comic.title}
+                            className="w-full rounded-lg shadow-lg"
+                        />
                     </div>
+                    <div className="md:w-2/3">
+                        <h1 className="text-3xl font-bold mb-4">{comic.title}</h1>
 
-                    <div className="mb-4">
-                        <strong className="block mb-2">Synopsis:</strong>
-                        <p className="text-gray-700 leading-relaxed">
-                            {comicDetail?.synopsis || "Synopsis tidak tersedia."}
-                        </p>
-                    </div>
-
-                    {/* Daftar Chapter */}
-                    <div className="mt-6">
-                        <h3 className="text-xl font-semibold mb-3">Daftar Chapter</h3>
-                        <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-                           {comicDetail?.chapters?.map((chapter, index) => (
-    <button
-        key={index}
-        onClick={() => navigate(`/read-comic/${slug}/chapter-${chapter.chapter}`, { 
-            state: { 
-                chapterLink: chapter.link,
-                comicTitle: comic.title,
-                chapterNumber: chapter.chapter,
-            } 
-        })}
-        className="bg-gray-100 hover:bg-gray-200 p-2 rounded text-center text-sm"
-    >
-        {chapter.chapter}
-    </button>
-))}
+                        <div className="mb-4">
+                            <strong>Chapter:</strong> {comic.chapter}
                         </div>
-                    </div>
 
-                    <div className="flex space-x-4 mt-6">
-                        <button
-                            onClick={handleReadComic}
-                            className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition"
-                        >
-                            Baca
-                        </button>
+                        <div className="mb-4">
+                            <strong className="block mb-2">Synopsis:</strong>
+                            <p className="text-gray-400 leading-relaxed">
+                                {comicDetail?.synopsis || "Synopsis tidak tersedia."}
+                            </p>
+                        </div>
 
-                        <div className="flex items-center space-x-2">
-                            <span className="text-gray-600">Sumber:</span>
-                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
-                                {comicDetail?.creator || "Unknown"}
-                            </span>
+                        {/* Daftar Chapter */}
+                        <div className="mt-6">
+                            <h3 className="text-xl font-semibold mb-3">Daftar Chapter</h3>
+                            <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+                               {comicDetail?.chapters?.map((chapter, index) => (
+        <button
+            key={index}
+            onClick={() => navigate(`/read-comic/${slug}/chapter-${chapter.chapter}`, { 
+                state: { 
+                    chapterLink: chapter.link,
+                    comicTitle: comic.title,
+                    chapterNumber: chapter.chapter,
+                    // === FIX NAVIGASI: Menyimpan state detail untuk kembali ===
+                    comicDetailState: { comic: comic, processedLink: processedLink }
+                } 
+            })}
+            // === MODIFIKASI TEMA GELAP: Tombol Chapter ===
+            className="bg-indigo-700 hover:bg-indigo-600 p-2 rounded text-center text-sm text-white"
+        >
+            {chapter.chapter}
+        </button>
+    ))}
+                            </div>
+                        </div>
+
+                        <div className="flex space-x-4 mt-6">
+                            <button
+                                onClick={handleReadComic}
+                                // === MODIFIKASI TEMA GELAP: Tombol Baca ===
+                                className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+                            >
+                                Baca
+                            </button>
+
+                            <div className="flex items-center space-x-2">
+                                {/* === MODIFIKASI TEMA GELAP: Teks Sumber === */}
+                                <span className="text-gray-400">Sumber:</span>
+                                {/* === MODIFIKASI TEMA GELAP: Tag Sumber === */}
+                                <span className="bg-blue-800 text-white px-2 py-1 rounded text-sm">
+                                    {comicDetail?.creator || "Unknown"}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
