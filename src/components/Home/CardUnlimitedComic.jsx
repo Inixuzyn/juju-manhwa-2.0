@@ -25,7 +25,17 @@ const CardUnlimitedComic = () => {
                     .replace(/[^a-z0-9]+/g, '-')
                     .replace(/^-+|-+$/g, '');
 
-                const link = comic.link.replace('/manga/', '/').replace('/plus/', '/');
+                let cleanLink = comic.link;
+                try {
+                    const urlObj = new URL(comic.link);
+                    cleanLink = urlObj.pathname; 
+                    cleanLink = cleanLink
+                        .replace('/manga/', '')
+                        .replace('/plus/', '')
+                        .replace(/^\/+|\/+$/g, ''); 
+                } catch (e) {
+                    console.log("Error parsing URL", comic.link);
+                }
 
                 const imageUrl = comic.image && !comic.image.includes('lazy.jpg')
                     ? comic.image
@@ -34,7 +44,7 @@ const CardUnlimitedComic = () => {
                 return {
                     ...comic,
                     image: imageUrl,
-                    processedLink: link,
+                    processedLink: cleanLink,
                     slug: slug,
                     source: 'Unlimited', 
                     popularity: 'N/A'   

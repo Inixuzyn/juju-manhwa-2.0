@@ -16,7 +16,13 @@ const Navbar = () => {
         { name: 'All Comic', path: '/unlimited', icon: faInfinity },
         { name: 'Statistics', path: '/statistics', icon: faChartLine },
         { name: 'History', path: '/history', icon: faHistory },
-    ]
+    ].filter(link => {
+        const isProduction = import.meta.env.PROD; 
+        if (isProduction && link.path === '/statistics') {
+            return false;
+        }
+        return true; 
+    });
 
     const isActive = (path) => {
         return location.pathname === path
