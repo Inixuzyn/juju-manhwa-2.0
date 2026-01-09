@@ -8,4 +8,3 @@ const PageDetail = () => {
 }
 
 export default PageDetail
-  
