@@ -7,15 +7,16 @@ const CardUnlimitedComic = () => {
     const [comics, setComics] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-
+    const [hoveredIndex, setHoveredIndex] = useState(null)
+    
     const navigate = useNavigate()
-
+    
     const fetchComics = async () => {
         try {
             const response = await axios.get('https://www.sankavollerei.com/comic/unlimited')
             const rawComics = response.data.comics || []
-            const filteredComics = rawComics.filter(item => 
-                !item.title.toLowerCase().includes('apk') && 
+            const filteredComics = rawComics.filter(item =>
+                !item.title.toLowerCase().includes('apk') &&
                 !item.chapter.toLowerCase().includes('download')
             )
             
@@ -24,65 +25,65 @@ const CardUnlimitedComic = () => {
                     .toLowerCase()
                     .replace(/[^a-z0-9]+/g, '-')
                     .replace(/^-+|-+$/g, '');
-
+                
                 let cleanLink = comic.link;
                 try {
                     const urlObj = new URL(comic.link);
-                    cleanLink = urlObj.pathname; 
+                    cleanLink = urlObj.pathname;
                     cleanLink = cleanLink
                         .replace('/manga/', '')
                         .replace('/plus/', '')
-                        .replace(/^\/+|\/+$/g, ''); 
+                        .replace(/^\/+|\/+$/g, '');
                 } catch (e) {
                     console.log("Error parsing URL", comic.link);
                 }
-
-                const imageUrl = comic.image && !comic.image.includes('lazy.jpg')
-                    ? comic.image
-                    : 'https://via.placeholder.com/300x450?text=Cover+Unlimited';
+                
+                const imageUrl = comic.image && !comic.image.includes('lazy.jpg') ?
+                    comic.image :
+                    'https://via.placeholder.com/300x450/1e293b/ffffff?text=Cover+Unlimited';
                 
                 return {
                     ...comic,
                     image: imageUrl,
                     processedLink: cleanLink,
                     slug: slug,
-                    source: 'Unlimited', 
-                    popularity: 'N/A'   
+                    source: 'Unlimited',
+                    popularity: 'N/A'
                 }
             })
-
+            
             setComics(processedComics)
             setLoading(false)
-
+            
         } catch (err) {
             setError(err)
             setLoading(false)
             console.error("Error fetching unlimited comics:", err)
         }
     }
-
+    
     useEffect(() => {
         fetchComics()
     }, [])
-
+    
     const handleComicDetail = (comic) => {
-        navigate(`/detail-comic/${comic.slug}`, { 
-            state: { 
+        navigate(`/detail-comic/${comic.slug}`, {
+            state: {
                 comic: {
                     title: comic.title,
                     image: comic.image,
                     chapter: comic.chapter,
-                    source: comic.source, 
+                    source: comic.source,
                     popularity: comic.popularity
                 },
-                processedLink: comic.processedLink 
-            } 
+                processedLink: comic.processedLink
+            }
         })
     }
-
+    
     if (loading) {
         return (
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="flex items-center gap-2">
                         <div className="w-1 h-8 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></div>
@@ -92,27 +93,33 @@ const CardUnlimitedComic = () => {
                     </div>
                     <div className="flex-1 h-px bg-gradient-to-r from-gray-300 dark:from-gray-700 to-transparent"></div>
                 </div>
-                <SkeletonLoader count={12} type="card" />
+                <SkeletonLoader count={12} type="card" className="fade-in" />
             </div>
         )
     }
-
+    
     if (error) {
         return (
             <div className="flex justify-center items-center min-h-[400px] p-4">
-                <div className="bg-red-500/10 border border-red-500/50 rounded-2xl p-8 text-center backdrop-blur-sm max-w-md">
+                <div className="bg-red-500/10 border border-red-500/50 rounded-2xl p-8 text-center backdrop-blur-sm max-w-md fade-in">
                     <svg className="w-16 h-16 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <h2 className="text-xl font-bold text-red-400 mb-2">Terjadi Kesalahan</h2>
                     <p className="text-red-300">{error.message}</p>
+                    <button
+                        onClick={fetchComics}
+                        className="mt-4 px-6 py-2 bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-lg hover:from-pink-500 hover:to-rose-500 transition-all"
+                    >
+                        Coba Lagi
+                    </button>
                 </div>
             </div>
         )
     }
-
+    
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
             <div className="flex items-center gap-3 mb-8">
                 <div className="flex items-center gap-2">
                     <div className="w-1 h-8 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></div>
@@ -123,28 +130,37 @@ const CardUnlimitedComic = () => {
                 <div className="flex-1 h-px bg-gradient-to-r from-gray-300 dark:from-gray-700 to-transparent"></div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
                 {comics.map((comic, index) => (
                     <div
-                        key={comic.title}
-                        className="group relative bg-white/80 dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-900 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-300 dark:border-gray-700 hover:border-pink-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20 hover:-translate-y-2"
-                        style={{ animationDelay: `${index * 50}ms` }}
+                        key={comic.title + index}
+                        className="group relative bg-white/90 dark:bg-gradient-to-b dark:from-gray-800/90 dark:to-gray-900/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-pink-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/10 hover:-translate-y-1"
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        onMouseLeave={() => setHoveredIndex(null)}
+                        style={{ 
+                            animationDelay: `${index * 50}ms`,
+                            animation: 'fadeInUp 0.5s ease-out forwards'
+                        }}
                     >
-                        <div className="relative aspect-[2/3] overflow-hidden">
-                            <img
-                                src={comic.image}
-                                alt={comic.title}
-                                width="300"
-                                height="450"
-                                loading={index < 6 ? "eager" : "lazy"}
-                                decoding="async"
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                onError={(e) => {
-                                    e.target.src = 'https://via.placeholder.com/300x450?text=Comic+Cover'
-                                }}
-                            />
+                        <div className="relative aspect-[2/3] overflow-hidden bg-gray-200 dark:bg-gray-800">
+                            {comic.image ? (
+                                <img
+                                    src={comic.image}
+                                    alt={comic.title}
+                                    width="300"
+                                    height="450"
+                                    loading={index < 6 ? "eager" : "lazy"}
+                                    decoding="async"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    onError={(e) => {
+                                        e.target.src = 'https://via.placeholder.com/300x450/1e293b/ffffff?text=Cover+Komik'
+                                    }}
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-800 animate-pulse"></div>
+                            )}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <div className="absolute top-2 right-2 bg-gradient-to-r from-pink-600 to-rose-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
+                            <div className="absolute top-2 right-2 bg-gradient-to-r from-pink-600 to-rose-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1 z-10">
                                 {comic.chapter}
                             </div>
                         </div>
@@ -155,9 +171,9 @@ const CardUnlimitedComic = () => {
                             </h3>
                             <button
                                 onClick={() => handleComicDetail(comic)}
-                                className="w-full bg-gradient-to-r from-pink-600 to-rose-600 text-white py-2 rounded-lg hover:from-pink-500 hover:to-rose-500 transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-pink-500/50 flex items-center justify-center gap-2"
+                                className="w-full bg-gradient-to-r from-pink-600 to-rose-600 text-white py-2.5 rounded-lg hover:from-pink-500 hover:to-rose-500 transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-pink-500/50 flex items-center justify-center gap-2 group/btn"
                             >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 transition-transform group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                 </svg>
                                 Baca Komik
@@ -165,7 +181,7 @@ const CardUnlimitedComic = () => {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div> 
         </div>
     )
 }
